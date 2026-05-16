@@ -23,19 +23,24 @@ function debounce(fn, delay = 1000) {
 输出：9
 */
 function numsLinkLength(nums) {
-  let sortNums = Array.from(new Set(nums.sort((a, b) => a - b)))
-  let _arr = [];
-  let count = 1;
-  sortNums.reduce((pre, cur) => {
-    if (cur - pre == 1) {
-      count++;
-      return cur
-    } else {
-      _arr.push(count)
-      count = 1
+  let numsSet = new Set(nums);
+  let maxLength = 0;
+
+  for (let num of numsSet) {
+    if (!numsSet.has(num - 1)) {
+      let currentNum = num;
+      let currentLength = 1;
+
+      while (numsSet.has(currentNum + 1)) {
+        currentNum++;
+        currentLength++;
+      }
+
+      maxLength = Math.max(maxLength, currentLength);
     }
-  })
-  return _arr.length ? _arr.sort((a, b) => b - a)[0] : count;
+  }
+
+  return maxLength;
 }
 
 // 3.输出的顺序
