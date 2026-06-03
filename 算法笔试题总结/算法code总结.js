@@ -23,19 +23,24 @@ function debounce(fn, delay = 1000) {
 输出：9
 */
 function numsLinkLength(nums) {
-  let sortNums = Array.from(new Set(nums.sort((a, b) => a - b)))
-  let _arr = [];
-  let count = 1;
-  sortNums.reduce((pre, cur) => {
-    if (cur - pre == 1) {
-      count++;
-      return cur
-    } else {
-      _arr.push(count)
-      count = 1
+  const numsSet = new Set(nums);
+  let maxLength = 0;
+
+  numsSet.forEach((num) => {
+    if (!numsSet.has(num - 1)) {
+      let currentNum = num;
+      let currentLength = 1;
+
+      while (numsSet.has(currentNum + 1)) {
+        currentNum++;
+        currentLength++;
+      }
+
+      maxLength = Math.max(maxLength, currentLength);
     }
   })
-  return _arr.length ? _arr.sort((a, b) => b - a)[0] : count;
+
+  return maxLength;
 }
 
 // 3.输出的顺序
@@ -47,18 +52,22 @@ async function async1() {
 async function async2() {
   console.log("async2");
 }
-console.log("script start");
-setTimeout(function () {
-  console.log("setTimeout");
-}, 0);
-async1();
-new Promise(resolve => {
-  console.log("promise1");
-  resolve();
-}).then(function () {
-  console.log("promise2");
-});
-console.log('script end')
+const shouldRunExamples = typeof require === 'undefined' || (typeof module !== 'undefined' && require.main === module);
+
+if (shouldRunExamples) {
+  console.log("script start");
+  setTimeout(function () {
+    console.log("setTimeout");
+  }, 0);
+  async1();
+  new Promise(resolve => {
+    console.log("promise1");
+    resolve();
+  }).then(function () {
+    console.log("promise2");
+  });
+  console.log('script end')
+}
 /* script start; async1 start; async2; promise1; script end; promise2; async1 end; setTimeout */
 
 // 4. 输出的顺序   
@@ -78,9 +87,16 @@ const first = () => (new Promise((resolve, reject) => {
     console.log(arg);
   });
 }));
-first().then((arg) => {
-  console.log(arg);
-});
-console.log(4);
+if (shouldRunExamples) {
+  first().then((arg) => {
+    console.log(arg);
+  });
+  console.log(4);
+}
 /* script start; async1 start; 4; promise2; 1; 2; async1 end; setTimeout; 5; Promise { 1 } */
 
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    numsLinkLength,
+  };
+}
