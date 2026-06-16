@@ -23,19 +23,24 @@ function debounce(fn, delay = 1000) {
 输出：9
 */
 function numsLinkLength(nums) {
-  let sortNums = Array.from(new Set(nums.sort((a, b) => a - b)))
-  let _arr = [];
-  let count = 1;
-  sortNums.reduce((pre, cur) => {
-    if (cur - pre == 1) {
-      count++;
-      return cur
-    } else {
-      _arr.push(count)
-      count = 1
+  const numSet = new Set(nums);
+  let longest = 0;
+
+  for (const num of numSet) {
+    if (numSet.has(num - 1)) {
+      continue;
     }
-  })
-  return _arr.length ? _arr.sort((a, b) => b - a)[0] : count;
+
+    let current = num;
+    let count = 1;
+    while (numSet.has(current + 1)) {
+      current++;
+      count++;
+    }
+    longest = Math.max(longest, count);
+  }
+
+  return longest;
 }
 
 // 3.输出的顺序
@@ -47,18 +52,20 @@ async function async1() {
 async function async2() {
   console.log("async2");
 }
-console.log("script start");
-setTimeout(function () {
-  console.log("setTimeout");
-}, 0);
-async1();
-new Promise(resolve => {
-  console.log("promise1");
-  resolve();
-}).then(function () {
-  console.log("promise2");
-});
-console.log('script end')
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+  console.log("script start");
+  setTimeout(function () {
+    console.log("setTimeout");
+  }, 0);
+  async1();
+  new Promise(resolve => {
+    console.log("promise1");
+    resolve();
+  }).then(function () {
+    console.log("promise2");
+  });
+  console.log('script end')
+}
 /* script start; async1 start; async2; promise1; script end; promise2; async1 end; setTimeout */
 
 // 4. 输出的顺序   
@@ -78,9 +85,17 @@ const first = () => (new Promise((resolve, reject) => {
     console.log(arg);
   });
 }));
-first().then((arg) => {
-  console.log(arg);
-});
-console.log(4);
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+  first().then((arg) => {
+    console.log(arg);
+  });
+  console.log(4);
+}
 /* script start; async1 start; 4; promise2; 1; 2; async1 end; setTimeout; 5; Promise { 1 } */
 
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    debounce,
+    numsLinkLength,
+  };
+}
