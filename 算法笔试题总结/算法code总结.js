@@ -52,18 +52,20 @@ async function async1() {
 async function async2() {
   console.log("async2");
 }
-console.log("script start");
-setTimeout(function () {
-  console.log("setTimeout");
-}, 0);
-async1();
-new Promise(resolve => {
-  console.log("promise1");
-  resolve();
-}).then(function () {
-  console.log("promise2");
-});
-console.log('script end')
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+  console.log("script start");
+  setTimeout(function () {
+    console.log("setTimeout");
+  }, 0);
+  async1();
+  new Promise(resolve => {
+    console.log("promise1");
+    resolve();
+  }).then(function () {
+    console.log("promise2");
+  });
+  console.log('script end')
+}
 /* script start; async1 start; async2; promise1; script end; promise2; async1 end; setTimeout */
 
 // 4. 输出的顺序   
@@ -83,10 +85,12 @@ const first = () => (new Promise((resolve, reject) => {
     console.log(arg);
   });
 }));
-first().then((arg) => {
-  console.log(arg);
-});
-console.log(4);
+if (typeof require !== 'undefined' && typeof module !== 'undefined' && require.main === module) {
+  first().then((arg) => {
+    console.log(arg);
+  });
+  console.log(4);
+}
 /* script start; async1 start; 4; promise2; 1; 2; async1 end; setTimeout; 5; Promise { 1 } */
 
 if (typeof module !== 'undefined' && module.exports) {
